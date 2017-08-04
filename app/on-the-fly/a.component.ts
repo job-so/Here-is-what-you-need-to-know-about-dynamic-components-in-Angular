@@ -1,5 +1,7 @@
 import {Compiler, Component, Injector, NgModule, NgModuleRef, ViewChild, ViewContainerRef} from "@angular/core";
 
+import { CModule } from "./c.module";
+
 @Component({
     moduleId: module.id,
     selector: 'otf-a-component',
@@ -19,7 +21,7 @@ export class OTFAComponent {
 
         const tmpCmp = Component({template: template})(class {
         });
-        const tmpModule = NgModule({declarations: [tmpCmp]})(class {
+        const tmpModule = NgModule({imports: [CModule], declarations: [tmpCmp]})(class {
         });
 
         this._compiler.compileModuleAndAllComponentsAsync(tmpModule)
