@@ -17,18 +17,21 @@ export class OTFAComponent {
     }
 
     ngAfterViewInit() {
-        const template = '<span>I am {{name}}</span>';
+        const template = '<span>I am {{name}}</span><br /><c-component></c-component>';
 
         const tmpCmp = Component({template: template})(class {
         });
-        const tmpModule = NgModule({imports: [CModule], declarations: [tmpCmp]})(class {
+        tmpCmp.prototype['name'] = 'B component';
+
+        const tmpModule = NgModule({imports: [CModule], declarations: [tmpCmp], entryComponents: [tmpCmp]})(class {
         });
 
-        this._compiler.compileModuleAndAllComponentsAsync(tmpModule)
-            .then((factories) => {
-                const f = factories.componentFactories[0];
+        this._compiler.compileModuleAsync(tmpModule)
+            .then((moduleFactory) => {
+                const resolver = moduleFactory.create(this._injector).componentFactoryResolver;
+                const f = resolver.resolveComponentFactory(tmpCmp);
                 const cmpRef = f.create(this._injector, [], null, this._m);
-                cmpRef.instance.name = 'B component';
+                //cmpRef.instance.name = 'B component';
                 this._container.insert(cmpRef.hostView);
             })
     }
