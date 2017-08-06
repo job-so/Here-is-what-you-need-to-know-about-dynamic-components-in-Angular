@@ -1,6 +1,7 @@
-import {Compiler, Component, Injector, NgModule, NgModuleRef, ViewChild, ViewContainerRef} from "@angular/core";
+import {Compiler, Component, Injector, NgModule, NgModuleRef, ViewChild, ViewContainerRef, Input} from "@angular/core";
 
 import { CModule } from "./c.module";
+import { OTFModule } from "./otf.module";
 
 @Component({
     moduleId: module.id,
@@ -9,6 +10,7 @@ import { CModule } from "./c.module";
 })
 
 export class OTFAComponent {
+    @Input() temp : string;
     @ViewChild('vc', {read: ViewContainerRef}) _container: ViewContainerRef;
 
     constructor(private _compiler: Compiler,
@@ -17,13 +19,13 @@ export class OTFAComponent {
     }
 
     ngAfterViewInit() {
-        const template = '<span>I am {{name}}</span><br /><c-component></c-component>';
-
+        const template = '<span>I am {{name}}</span><br /><c-component></c-component>' + this.temp;
+        
         const tmpCmp = Component({template: template})(class {
         });
         tmpCmp.prototype['name'] = 'B component';
 
-        const tmpModule = NgModule({imports: [CModule], declarations: [tmpCmp], entryComponents: [tmpCmp]})(class {
+        const tmpModule = NgModule({imports: [CModule, OTFModule], declarations: [tmpCmp], entryComponents: [tmpCmp]})(class {
         });
 
         this._compiler.compileModuleAsync(tmpModule)
